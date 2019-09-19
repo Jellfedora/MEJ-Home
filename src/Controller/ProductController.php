@@ -41,7 +41,7 @@ class ProductController extends AbstractFOSRestController
     }
     /**
      * Post a Product.
-     * @Rest\Post("/products/save_product", name="save_products")
+     * @Rest\Post("/products/save_product", name="save_product")
      * 
      * @return Response
      */
@@ -70,32 +70,32 @@ class ProductController extends AbstractFOSRestController
     }
 
     /**
-     * @Route("/api/user/delete/{id}", name="delete_user", methods="DELETE")
+     * @Route("/products/delete/{id}", name="delete_product", methods="DELETE")
      */
-    // public function deleteUser($id, UserService $userService)
-    // {
-    //     // On récupére l'utilisateur
-    //     $user = $this->getDoctrine()
-    //         ->getRepository(User::class)
-    //         ->find($id);
-    //     // Si null 
-    //     if (!$user) {
-    //         return $this->json('Pas d\'utilisateur pour l\'id ' . $id, 404);
-    //     }
-    //     try {
-    //         // Try to delete user
-    //         $userService->deleteUser($user);
-    //     } catch (ValidatorErrorException $e) {
-    //         $errors = $e->getErrors();
-    //         // If error
-    //         if (count($errors) > 0) {
-    //             $result['errors'] = [];
-    //             foreach ($errors as $error) {
-    //                 $result['errors'][] = $error->getMessage();
-    //             }
-    //             return $this->json($result, 422);
-    //         }
-    //     }
-    //     return $this->json(true, 201);
-    // }
+    public function deleteUser($id, ProductService $productService)
+    {
+        // On récupére l'utilisateur
+        $product = $this->getDoctrine()
+            ->getRepository(Product::class)
+            ->find($id);
+        // Si null 
+        if (!$product) {
+            return $this->json('Pas de produit pour l\'id ' . $id);
+        }
+        try {
+            // Try to delete user
+            $productService->deleteProduct($product);
+        } catch (ValidatorErrorException $e) {
+            $errors = $e->getErrors();
+            // If error
+            if (count($errors) > 0) {
+                $result['errors'] = [];
+                foreach ($errors as $error) {
+                    $result['errors'][] = $error->getMessage();
+                }
+                return $this->json($result, 422);
+            }
+        }
+        return $this->json(true, 201);
+    }
 }

@@ -49,6 +49,18 @@ class ProductService extends DefaultController
 
     /**
      * @param Product $product
+     * 
+     * @return true If product deleted
+     */
+    public function deleteProduct(Product $product)
+    {
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
+        return true;
+    }
+
+    /**
+     * @param Product $product
      */
     public function save(Product $product)
     {
