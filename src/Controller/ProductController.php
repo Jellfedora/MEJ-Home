@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Service\Exception\ValidatorErrorException;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use App\Service\ProductService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -39,14 +40,31 @@ class ProductController extends AbstractFOSRestController
         }
     }
     /**
-     * @Route("/products/save", name="save_products", methods="POST")
+     * Post a Product.
+     * @Rest\Post("/products/save_product", name="save_products")
+     * 
+     * @return Response
      */
-    public function saveListOfProduct(Request $request, SerializerInterface $serializer)
+    public function saveProduct(Request $request, SerializerInterface $serializer, ProductService $productService)
     {
 
         $postData = $request->getContent();
-        $list = $serializer->deserialize($postData, Product::class, 'json');
+        $product = $serializer->deserialize($postData, Product::class, 'json');
 
+        try {
+            // Try to save user
+            $productService->addProduct($product);
+        } catch (ValidatorErrorException $e) {
+            $errors = $e->getErrors();
+            // If error
+            if (count($errors) > 0) {
+                $result['errors'] = [];
+                foreach ($errors as $error) {
+                    $result['errors'][] = $error->getMessage();
+                }
+                return $this->json($result, 422);
+            }
+        }
 
         return $this->json('true', 201);
     }
