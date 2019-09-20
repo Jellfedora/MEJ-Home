@@ -94,14 +94,20 @@ class ProductController extends AbstractFOSRestController
             $errors = $e->getErrors();
             // If error
             if (count($errors) > 0) {
-                $result['errors'] = [];
+                $result = array(
+                    "status" => 'nope'
+                );
                 foreach ($errors as $error) {
-                    $result['errors'][] = $error->getMessage();
+                    $result['message'][] = $error->getMessage();
                 }
                 return $this->json($result, 422);
             }
         }
-        return $this->json($name . ' Supprimé', 201);
+        $result = array(
+            "message"  => $name . ' supprimé',
+            "status" => 'ok'
+        );
+        return $this->json($result, 201);
     }
 
     /**
