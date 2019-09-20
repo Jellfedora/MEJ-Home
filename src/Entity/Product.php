@@ -3,9 +3,14 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
+ * * @UniqueEntity(
+ *              fields={"name"},
+ *              errorPath="name",
+ *              message="Ce produit est déjà présent dans la liste.")
  */
 class Product
 {
@@ -17,7 +22,7 @@ class Product
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
     private $name;
 

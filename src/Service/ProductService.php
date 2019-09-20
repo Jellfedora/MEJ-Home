@@ -68,4 +68,44 @@ class ProductService extends DefaultController
         $this->entityManager->persist($product);
         $this->entityManager->flush();
     }
+
+    /**
+     * @param Product $product, $patchData
+     * 
+     * @throws ValidatorErrorException If validation fails
+     * @return true If user edited
+     */
+    public function editProduct(Product $product, $patchData)
+    {
+        $errors = $this->validator->validate($product);
+
+        // Name
+        $name = $patchData->getName();
+        if ($name) {
+            $product->setName($name);
+        }
+
+        // Quantity
+        $quantity = $patchData->getQuantity();
+        if ($quantity) {
+            $product->setQuantity($quantity);
+        }
+
+        // Archive
+        $archive = $patchData->getArchive();
+        if ($archive) {
+            $product->setPassword($archive);
+        }
+
+        $errors = $this->validator->validate($product);
+        if (count($errors) > 0) {
+            // Levons une exception personnalisée
+            $e = new ValidatorErrorException();
+            $e->setErrors($errors);
+            throw $e;
+        }
+
+        $this->save($product);
+        return true;
+    }
 }

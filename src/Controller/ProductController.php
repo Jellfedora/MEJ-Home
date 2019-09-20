@@ -10,6 +10,10 @@ use App\Service\Exception\ValidatorErrorException;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Service\ProductService;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Validation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -66,21 +70,22 @@ class ProductController extends AbstractFOSRestController
             }
         }
 
-        return $this->json('true', 201);
+        return $this->json($product->getName() . ' ajouté', 201);
     }
 
     /**
-     * @Route("/products/delete/{id}", name="delete_product", methods="DELETE")
+     * @Route("/products/delete/{name}", name="delete_product", methods="DELETE")
      */
-    public function deleteUser($id, ProductService $productService)
+    public function deleteProduct($name, ProductService $productService)
     {
         // On récupére l'utilisateur
         $product = $this->getDoctrine()
             ->getRepository(Product::class)
-            ->find($id);
+            ->findOneBy(['name' => $name]);
+
         // Si null 
         if (!$product) {
-            return $this->json('Pas de produit pour l\'id ' . $id);
+            return $this->json('Produit ' . $name . ' non trouvé');
         }
         try {
             // Try to delete user
@@ -96,6 +101,40 @@ class ProductController extends AbstractFOSRestController
                 return $this->json($result, 422);
             }
         }
-        return $this->json(true, 201);
+        return $this->json($name . ' Supprimé', 201);
+    }
+
+    /**
+     * @Route("/products/edit/{name}", name="edit_product", methods="PATCH")
+     */
+    public function editProduct($name, ProductService $productService, Request $request, SerializerInterface $serializer)
+    {
+        $patchData = $request->getContent();
+        $patchProduct = $serializer->deserialize($patchData, Product::class, 'json');
+
+        // On récupére le produit
+        $product = $this->getDoctrine()
+            ->getRepository(Product::class)
+            ->findOneBy(['name' => $name]);
+
+        // Si null 
+        if (!$product) {
+            return $this->json('Produit ' . $name . ' non trouvé');
+        }
+        try {
+            // Try to edit product
+            $productService->editProduct($product, $patchProduct);
+        } catch (ValidatorErrorException $e) {
+            $errors = $e->getErrors();
+            // If error
+            if (count($errors) > 0) {
+                $result['errors'] = [];
+                foreach ($errors as $error) {
+                    $result['errors'][] = $error->getMessage();
+                }
+                return $this->json($result, 422);
+            }
+        }
+        return $this->json($product, 201);
     }
 }
