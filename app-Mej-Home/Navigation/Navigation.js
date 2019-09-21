@@ -6,16 +6,28 @@ import ItemDetail from '../Components/ItemDetail'
 import FilmDetail from '../Components/BabyCheck'
 
 const SearchStackNavigator = createStackNavigator({
-    List: { // Ici j'ai appelé la vue "Search" mais on peut mettre ce que l'on veut. C'est le nom qu'on utilisera pour appeler cette vue
+    List: {
         screen: List,
         navigationOptions: {
-            title: 'Ma Val de poche'
-        }
+            title: 'Ma Val de poche',
+            headerStyle: {
+                backgroundColor: '#9071E9',
+                shadowColor: 'transparent',
+                elevation: 0
+            },
+            headerTitleStyle: {
+                textAlign: 'center',
+                flexGrow: 1,
+                color: 'white',
+                textTransform: 'uppercase',
+            },
+        },
+
     },
-    ItemDetail: { // Encore une fois j'ai mis le même nom que celui du component mais libre à vous de choisir un nom différent
+    ItemDetail: {
         screen: ItemDetail
     },
-    FilmDetail: { // Encore une fois j'ai mis le même nom que celui du component mais libre à vous de choisir un nom différent
+    FilmDetail: {
         screen: FilmDetail
     }
 })

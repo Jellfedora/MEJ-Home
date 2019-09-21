@@ -1,35 +1,62 @@
 import React from 'react'
-import { StyleSheet, View, Text, TouchableHighlight, TouchableOpacity, Button } from 'react-native'
+import { StyleSheet, View, TouchableWithoutFeedback, TouchableOpacity, Text } from 'react-native'
 import { connect } from 'react-redux'
 import { Ionicons } from '@expo/vector-icons';
+import { apiEditProduct } from '../API/MEJ-API'
 import { apiDeleteProduct } from '../API/MEJ-API'
+import FlashMessage from "react-native-flash-message"
+import { showMessage, hideMessage } from "react-native-flash-message"
+import * as Animatable from 'react-native-animatable'
+import * as Font from 'expo-font';
 
 class Product extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            product: this.props
+            product: this.props,
+            fontLoaded: false,
         }
     }
 
-    componentDidMount() {
-        // console.log('component product mount:')
+    async componentDidMount() {
+        this.view.bounceInLeft(1000).then();
+        await Font.loadAsync({
+            'font-app': require('../assets/fonts/Permanent_Marker/PermanentMarker-Regular.ttf'),
+        });
+
+        this.setState({ fontLoaded: true });
     }
 
+    // componentDidMount() {
+    //     // console.log('component product mount:')
+    //     this.view.bounceInLeft(1000).then();
+    // }
+
     componentDidUpdate() {
-        // console.log("component Product DidUpdate : ")
+        console.log("component Product DidUpdate : ")
         // console.log(this.state.product)
+
 
     }
 
     // Supprime un produit de la liste
     _deleteProduct(value) {
-        apiDeleteProduct(value.id).then(data => {
-            if (data == true) {
-                console.log(data)
+
+        apiDeleteProduct(value.name).then(data => {
+            if (data.status === "ok") {
+                this.view.bounceOut(1000)
+                setTimeout(() => this.deleteProductWithReducer(value), 800)
+            } else {
+                showMessage({
+                    message: 'Tiens dis donc, mais ce serait ti pas un bug ça?',
+                    type: "danger",
+                    animationDuration: 1000
+                })
             }
         })
-        // console.log(value)
+    }
+
+    deleteProductWithReducer(value) {
         const action = { type: "DELETE_PRODUCT", value: value }
         this.props.dispatch(action)
     }
@@ -37,53 +64,85 @@ class Product extends React.Component {
     _addQuantity(value) {
         const action = { type: "ADD_QUANTITY", value: value }
         this.props.dispatch(action)
+        // Api MEJ-Home
+        apiEditProduct(this.props.product).then(data => {
+        })
+
     }
 
     _removeQuantity(value) {
         const action = { type: "REMOVE_QUANTITY", value: value }
         this.props.dispatch(action)
+        // Api MEJ-Home
+        apiEditProduct(this.props.product).then(data => {
+        })
     }
 
-    // _removeQuantity() {
-    //     // Définition de notre action ici
-    //     // console.log(this.state)
-    //     const action = { type: "LESS_QUANTITY", value: this.state.product }
-    //     this.props.dispatch(action)
-    // }
-
-
-
+    handleViewRef = ref => this.view = ref;
+    bounce = () => this.view.bounceInLeft(800)
     // Affichage
     render() {
-        // console.log(this.state)
         const product = this.props.product
         if (product.archive !== 1) {
             return (
-                <View
-                    style={styles.item}>
-                    <Text style={styles.title_item}>{product.name}({product.quantity})</Text>
-                    <View style={styles.container_action}>
-                        {/* REMOVE QUANTITY*/}
-                        <TouchableOpacity onPress={() => this._removeQuantity(this.props.product)}>
-                            <View>
-                                <Ionicons name="ios-remove" size={50} color="white" />
-                            </View>
-                        </TouchableOpacity>
-                        {/* ADD QUANTITY*/}
-                        <TouchableOpacity onPress={() => this._addQuantity(this.props.product)}>
-                            <View>
-                                <Ionicons name="ios-add" size={50} color="white" />
-                            </View>
-                        </TouchableOpacity>
-                        {/* DELETE PRODUCT */}
-                        <TouchableOpacity onPress={() => this._deleteProduct(this.props.product)}>
-                            <View>
-                                <Ionicons name="ios-trash" size={50} color="white" />
-                            </View>
-                        </TouchableOpacity>
-                    </View>
 
-                </View>
+                <TouchableWithoutFeedback >
+                    <Animatable.View ref={this.handleViewRef}>
+                        <View
+                            style={styles.item}>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{
+                                        fontFamily: 'font-app',
+                                        color: '#9071E9',
+                                        fontSize: 25,
+                                        textAlign: 'center',
+                                        flex: 1,
+                                        // marginTop: 12
+                                    }}>
+                                        {product.name}
+                                    </Text>
+                                ) : null
+                            }
+                            {/* <Text style={styles.title_item}>{product.name}({product.quantity})</Text> */}
+                            <View style={styles.container_action}>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{
+                                            fontFamily: 'font-app',
+                                            color: '#9071E9',
+                                            fontSize: 25,
+                                            textAlign: 'center',
+                                        }}> ( {product.quantity} )</Text>
+                                    ) : null
+                                }
+
+                                {/* REMOVE QUANTITY*/}
+                                {this.props.product.quantity >= 2 &&
+                                    <TouchableOpacity onPress={() => this._removeQuantity(this.props.product)}>
+                                        <View>
+                                            <Ionicons name="ios-remove" size={50} color="#9071E9" />
+                                        </View>
+                                    </TouchableOpacity>
+                                }
+                                {/* ADD QUANTITY*/}
+                                <TouchableOpacity onPress={() => this._addQuantity(this.props.product)}>
+                                    <View>
+                                        <Ionicons name="ios-add" size={50} color="#9071E9" />
+                                    </View>
+                                </TouchableOpacity>
+
+                                {/* DELETE PRODUCT */}
+                                <TouchableOpacity onPress={() => this._deleteProduct(this.props.product)}>
+                                    <View>
+                                        <Ionicons name="ios-trash" size={50} color="#9071E9" />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            <FlashMessage position="top" />
+                        </View>
+                    </Animatable.View>
+                </TouchableWithoutFeedback>
             )
         } else {
             return null
@@ -98,24 +157,17 @@ const styles = StyleSheet.create({
     },
     item: {
         // marginBottom: 5,
+        display: 'flex',
         borderBottomWidth: 0.5,
-        borderBottomColor: 'white',
-        padding: 10,
+        borderBottomColor: '#9071E9',
+        // padding: 10,
         paddingRight: 30,
         flexDirection: 'row',
-        justifyContent: 'space-between'
-        // height: 60,
+        justifyContent: 'space-between',
+        height: 80,
+        alignItems: 'center'
 
 
-    },
-    title_item: {
-        fontSize: 20,
-        textTransform: 'uppercase',
-        color: 'white',
-        textAlign: 'center',
-        fontWeight: 'bold',
-        flex: 2,
-        marginTop: 12
     },
     container_action: {
         display: 'flex',
@@ -123,10 +175,15 @@ const styles = StyleSheet.create({
         flex: 1,
         width: 100,
         height: '100 %',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        borderLeftWidth: 0.5,
+        borderColor: 'white',
+        paddingLeft: 20,
+        display: 'flex',
+        alignItems: 'center'
     },
     quantity_item: {
-        color: 'white',
+        color: '#9071E9',
         fontSize: 20,
         fontWeight: 'bold',
     },

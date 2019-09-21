@@ -22,7 +22,7 @@ function manageItem(state = initialState, action) {
             }
             return nextState || state
         case 'REMOVE_QUANTITY':
-            if (action.value.quantity > 0) {
+            if (action.value.quantity > 1) {
                 action.value.quantity--
                 nextState = {
                     ...state,
