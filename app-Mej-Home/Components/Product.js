@@ -19,6 +19,7 @@ class Product extends React.Component {
     }
 
     async componentDidMount() {
+        console.log('component product tes:')
         this.view.bounceInLeft(1000).then();
         await Font.loadAsync({
             'font-app': require('../assets/fonts/Permanent_Marker/PermanentMarker-Regular.ttf'),
@@ -78,15 +79,23 @@ class Product extends React.Component {
         })
     }
 
+
+
+
+
     handleViewRef = ref => this.view = ref;
     bounce = () => this.view.bounceInLeft(800)
     // Affichage
     render() {
-        const product = this.props.product
+
+        // const product = this.props.product
+        // const { displayDetailForProduct } = this.props
+        const { product, displayDetailForProduct } = this.props
         if (product.archive !== 1) {
             return (
 
-                <TouchableWithoutFeedback >
+                <TouchableOpacity
+                    onPress={() => displayDetailForProduct(product.name)}>
                     <Animatable.View ref={this.handleViewRef}>
                         <View
                             style={styles.item}>
@@ -142,7 +151,7 @@ class Product extends React.Component {
                             <FlashMessage position="top" />
                         </View>
                     </Animatable.View>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
             )
         } else {
             return null
@@ -177,7 +186,7 @@ const styles = StyleSheet.create({
         height: '100 %',
         justifyContent: 'space-between',
         borderLeftWidth: 0.5,
-        borderColor: 'white',
+        borderColor: 'blue',
         paddingLeft: 20,
         display: 'flex',
         alignItems: 'center'

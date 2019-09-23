@@ -1,11 +1,11 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 
-class FilmDetail extends React.Component {
+class BabyCheck extends React.Component {
     render() {
         return (
             <View style={styles.main_container}>
-                <Text>Détail du film</Text>
+                <Text>Babycheck</Text>
             </View>
         )
     }
@@ -17,4 +17,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default FilmDetail
+export default BabyCheck

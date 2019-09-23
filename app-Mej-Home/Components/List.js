@@ -10,6 +10,7 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 
 import { getListOfProducts } from '../API/MEJ-API'
 import { postListOfProducts } from '../API/MEJ-API'
+import { apiEditProduct } from '../API/MEJ-API'
 
 import { Updates } from 'expo';
 
@@ -25,7 +26,8 @@ class List extends React.Component {
             products: [],
             isLoading: false, // Par défaut à false car il n'y a pas de chargement tant qu'on ne lance pas de recherche
             showTextInput: false,
-            showTextUpdate: false
+            showTextUpdate: false,
+            showTextInputEditName: false
         }
     }
 
@@ -48,6 +50,7 @@ class List extends React.Component {
         // Charge la liste de course au démarrage de l'app
         this._loadList()
     }
+
     componentDidUpdate() {
         // console.log("componentListDidUpdate : ")
 
@@ -120,10 +123,11 @@ class List extends React.Component {
         this.setState({ showTextInput: false })
     }
 
-    // _displayDetailForItem = (idItem) => {
-    //     console.log("Display item with id " + idItem)
-    //     this.props.navigation.navigate('ItemDetail')
-    // }
+    _displayDetailForProduct = (nameProduct) => {
+        console.log(nameProduct)
+        this.props.navigation.navigate("ProductDetail", { nameProduct: nameProduct })
+    }
+
 
     render() {
         return (
@@ -186,7 +190,7 @@ class List extends React.Component {
                     data={this.state.products}
                     // Identifie l'item de maniére unique
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => <Product product={item} quantityOfItem={this.quantityOfItem} />}
+                    renderItem={({ item }) => <Product product={item} quantityOfItem={this.quantityOfItem} displayDetailForProduct={this._displayDetailForProduct} />}
                 />
                 <FlashMessage position="top" />
             </View >
