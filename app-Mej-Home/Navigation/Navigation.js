@@ -32,15 +32,37 @@ const SearchStackNavigator = createStackNavigator({
     }
 })
 
+const BabyCheckStackNavigator = createStackNavigator({
+    List: {
+        screen: BabyCheck,
+        navigationOptions: {
+            title: 'Baby Check!',
+            headerStyle: {
+                backgroundColor: '#9071E9',
+                shadowColor: 'transparent',
+                elevation: 0
+            },
+            headerTitleStyle: {
+                textAlign: 'center',
+                flexGrow: 1,
+                color: 'white',
+                textTransform: 'uppercase',
+            },
+        },
+
+    },
+})
+
 const HomeTabNavigator = createBottomTabNavigator({
     BabyCheck: {
-        screen: BabyCheck,
+        screen: BabyCheckStackNavigator,
         navigationOptions: {
             tabBarIcon: () => {
                 return <Image
                     source={require('../assets/babycheck-icon.png')}
                     style={styles.icon} />
-            }
+            },
+
         }
     },
     List: {
