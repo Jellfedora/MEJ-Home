@@ -70,7 +70,6 @@ class BabyCheckController extends AbstractFOSRestController
                 return $this->json($result, 422);
             }
         }
-
         return $this->json($babycheck, 201);
     }
 

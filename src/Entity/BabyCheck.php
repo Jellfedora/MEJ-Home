@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use \Datetime;
+use Symfont\Component\Validator\Constraints as Assert;
 
 /**
+ * @ORM\Table(name="baby_check")
  * @ORM\Entity(repositoryClass="App\Repository\BabyCheckRepository")
  */
+
+
 class BabyCheck
 {
     /**
@@ -16,11 +19,6 @@ class BabyCheck
      * @ORM\Column(type="integer")
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -57,26 +55,21 @@ class BabyCheck
      */
     private $commentary;
 
+    /**
+     * @ORM\Column(type="datetime")
+     * @return \DateTime|null 
+     */
+
+    private $createdAt;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
-        $this->registration_date = new DateTime();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-        return $this;
     }
 
     public function getQuantityOfBottle(): ?int
@@ -160,6 +153,16 @@ class BabyCheck
     {
         $this->commentary = $commentary;
 
+        return $this;
+    }
+
+    public function getCreatedAt(): ?string
+    {
+        return $this->createdAt->format('d:m:Y H:i:s');
+    }
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
         return $this;
     }
 }

@@ -6,6 +6,14 @@ export function getListOfProducts() {
         .catch((error) => console.error(error))
 }
 
+export function getProduct(opts) {
+    return fetch('https://mej-api.hopto.org/products/get/' + opts, {
+        method: 'get',
+        body: JSON.stringify(opts)
+    })
+        .then((response) => response.json())
+        .catch((error) => console.error(error))
+}
 export function postListOfProducts(opts) {
     return fetch('https://mej-api.hopto.org/products/save_product', {
         method: 'post',
@@ -24,13 +32,13 @@ export function apiEditProduct(opts) {
         .catch((error) => console.error(error))
 }
 
-export function apiDeleteProduct(opts) {
-    return fetch('https://mej-api.hopto.org/products/delete/' + opts, {
-        method: 'delete',
-        body: JSON.stringify(opts)
+export function getListOfBabychecks() {
+    return fetch('https://mej-api.hopto.org/babychecks/get_all', {
+        method: 'get',
     })
         .then((response) => response.json())
         .catch((error) => console.error(error))
 }
+
 
 
