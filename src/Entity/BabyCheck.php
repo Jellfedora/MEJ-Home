@@ -57,15 +57,11 @@ class BabyCheck
 
     /**
      * @ORM\Column(type="datetime")
-     * @return \DateTime|null 
+     * @return \DateTimeInterface|null 
      */
-
     private $createdAt;
 
-    public function __construct()
-    {
-        $this->createdAt = new \DateTime();
-    }
+
 
     public function getId(): ?int
     {
@@ -156,11 +152,12 @@ class BabyCheck
         return $this;
     }
 
-    public function getCreatedAt(): ?string
+    public function getCreatedAt(): \DateTime
     {
-        return $this->createdAt->format('d:m:Y H:i:s');
+        // return $this->createdAt->format('d:m:Y H:i:s');
+        return $this->createdAt;
     }
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
         return $this;

@@ -34,6 +34,12 @@ class BabyCheckService extends DefaultController
         // Validons notre entité via le composant Validator
         $errors = $this->validator->validate($babycheck);
 
+        // Formate la date
+        $date = $babycheck->getCreatedAt();
+        // $formatDate = new \DateTime(strtotime($date));
+        $babycheck->setCreatedAt($date);
+
+
         $babycheck->setQuantityOfBottle($babycheck->getQuantityOfBottle());
         $babycheck->setPee($babycheck->getPee());
         $babycheck->setPoop($babycheck->getPoop());

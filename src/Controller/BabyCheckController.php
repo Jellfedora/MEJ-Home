@@ -52,10 +52,11 @@ class BabyCheckController extends AbstractFOSRestController
      */
     public function saveBabyCheck(Request $request, SerializerInterface $serializer, BabyCheckService $babycheckService)
     {
-
-        $postData = $request->getContent();
-        $babycheck = $serializer->deserialize($postData, BabyCheck::class, 'json');
-
+        $babycheck = $serializer->deserialize(
+            $request->getContent(),
+            BabyCheck::class,
+            'json'
+        );
         try {
             // Try to save user
             $babycheckService->addBabyCheck($babycheck);

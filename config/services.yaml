@@ -36,3 +36,10 @@ services:
         public: false
         tags:
         - { name: 'serializer.normalizer' }
+
+        # Ajour d'un deserializer pour récup et save datetime en json
+    datetime_normalizer:
+        class: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+        public: false
+        tags:
+            - { name: serializer.normalizer, priority: 9 }
